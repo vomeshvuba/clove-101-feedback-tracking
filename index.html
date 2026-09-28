@@ -1,0 +1,760 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Clove 101 Feedback Tracking</title>
+    <meta
+      name="description"
+      content="Track project delivery status, QA/QC feedback, and delivery progress for Clove 101."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="topbar">
+        <div class="brand-wrap">
+          <div>
+            <div class="brand-name">CLOVE</div>
+            <div class="brand-sub">101 feedback tracking</div>
+          </div>
+        </div>
+        <div class="topbar-actions">
+          <nav class="nav" aria-label="Main navigation">
+            <a href="#overview">Overview</a>
+            <a href="#status">Status</a>
+            <a href="#qa">QA / QC</a>
+            <a href="#reports">Reports</a>
+          </nav>
+          <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false">
+            <svg class="moon-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.7 15.2A8.5 8.5 0 0 1 8.8 3.3a8.5 8.5 0 1 0 11.9 11.9z"/></svg>
+            <svg class="sun-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32 1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+          </button>
+        </div>
+      </header>
+
+      <main>
+        <section class="hero" id="overview">
+          <div class="hero-copy">
+            <p class="eyebrow">Project delivery intelligence</p>
+            <h1>Track delivery, status, and quality in one view.</h1>
+            <p class="lead">
+              Clove 101 gives delivery teams a cleaner way to monitor project progress,
+              check QA/QC health, and keep client feedback aligned with execution.
+            </p>
+            <div class="cta-row">
+              <a class="primary-btn" href="#status">View dashboard</a>
+              <a class="secondary-btn" href="#qa">Review QA/QC</a>
+            </div>
+          </div>
+
+          <div class="hero-panel" aria-label="Project health summary">
+            <div class="panel-head">
+              <span>Delivery health</span>
+              <span class="pill success">Healthy</span>
+            </div>
+
+            <div class="stats-grid">
+              <div class="stat-box">
+                <strong>14</strong>
+                <span>Active projects</span>
+              </div>
+              <div class="stat-box">
+                <strong>92%</strong>
+                <span>On-time delivery</span>
+              </div>
+              <div class="stat-box">
+                <strong>7</strong>
+                <span>QA checks pending</span>
+              </div>
+            </div>
+
+            <div class="mini-chart" aria-hidden="true">
+              <span style="height: 38%"></span>
+              <span style="height: 48%"></span>
+              <span style="height: 52%"></span>
+              <span style="height: 68%"></span>
+              <span style="height: 76%"></span>
+              <span style="height: 92%"></span>
+            </div>
+          </div>
+        </section>
+
+        <section class="metrics" id="status">
+          <article class="metric-card accent-card">
+            <p class="metric-label">Project status</p>
+            <h2>Delivery pipeline</h2>
+            <ul>
+              <li><span>In progress</span><strong>6</strong></li>
+              <li><span>Awaiting approval</span><strong>4</strong></li>
+              <li><span>Completed</span><strong>12</strong></li>
+            </ul>
+          </article>
+
+          <article class="metric-card">
+            <p class="metric-label">Client feedback</p>
+            <h2>Response health</h2>
+            <ul>
+              <li><span>Positive</span><strong>81%</strong></li>
+              <li><span>Needs attention</span><strong>12%</strong></li>
+              <li><span>Pending</span><strong>7%</strong></li>
+            </ul>
+          </article>
+
+          <article class="metric-card" id="qa">
+            <p class="metric-label">QA / QC review</p>
+            <h2>Quality index</h2>
+            <ul>
+              <li><span>Pass rate</span><strong>94%</strong></li>
+              <li><span>Open issues</span><strong>11</strong></li>
+              <li><span>Escalations</span><strong>2</strong></li>
+            </ul>
+          </article>
+        </section>
+
+        <section class="metrics efficiency-metrics" aria-label="Efficiency metrics">
+          <article class="metric-card">
+            <p class="metric-label">Efficiency</p>
+            <h2>Completion efficiency</h2>
+            <strong class="efficiency-value" id="completion-efficiency">0%</strong>
+            <p class="metric-help">Completed projects / total projects</p>
+          </article>
+
+          <article class="metric-card">
+            <p class="metric-label">Efficiency</p>
+            <h2>Quality-adjusted</h2>
+            <strong class="efficiency-value" id="quality-efficiency">0%</strong>
+            <p class="metric-help">Completion efficiency x QA pass rate</p>
+          </article>
+
+          <article class="metric-card">
+            <p class="metric-label">Efficiency</p>
+            <h2>Team output ratio</h2>
+            <strong class="efficiency-value" id="team-output">0%</strong>
+            <p class="metric-help">Completed / completed + in progress</p>
+          </article>
+        </section>
+
+        <section class="table-section" id="reports">
+          <div class="section-header">
+            <div>
+              <p class="eyebrow">Live tracking</p>
+              <h3>Recent delivery overview</h3>
+            </div>
+            <div class="report-actions">
+              <div class="report-buttons">
+                <button class="ghost-btn" id="export-report" type="button">Export CSV</button>
+                <button class="ghost-btn" id="export-pdf" type="button">Export PDF</button>
+              </div>
+              <span class="export-status" id="export-status" role="status" aria-live="polite"></span>
+            </div>
+          </div>
+
+          <form id="project-form" class="project-form">
+            <input class="project-field" type="text" id="project-name" placeholder="Project name" required />
+            <select class="project-field" id="project-status" required>
+              <option value="" disabled selected>Select status</option>
+              <option value="In progress">In progress</option>
+              <option value="Review">Review</option>
+              <option value="Completed">Completed</option>
+              <option value="At risk">At risk</option>
+            </select>
+            <input class="project-field" type="text" id="project-owner" placeholder="Owner" required />
+            <select class="project-field" id="project-qa" required>
+              <option value="" disabled selected>Select QA/QC status</option>
+              <option value="Pass">Pass</option>
+              <option value="Pending">Pending</option>
+              <option value="Issue">Issue</option>
+            </select>
+            <input class="project-field" type="date" id="project-updated" aria-label="Updated date" />
+            <button class="project-submit" type="submit">Add project</button>
+          </form>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Project</th>
+                  <th>Status</th>
+                  <th>Owner</th>
+                  <th>QA/QC</th>
+                  <th>Updated</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr data-id="client-portal-revamp">
+                  <td>Client Portal Revamp</td>
+                  <td><span class="badge badge-progress">In progress</span></td>
+                  <td>Riya</td>
+                  <td>Pass</td>
+                  <td>Today</td>
+                  <td class="table-actions">
+                    <button class="action-btn edit-btn" type="button" data-action="edit" aria-label="Edit project">
+                      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zm14.71-9.04a1.003 1.003 0 0 0 0-1.42l-2.33-2.33a1.003 1.003 0 0 0-1.42 0l-1.45 1.45 3.75 3.75 1.45-1.45z"/></svg>
+                    </button>
+                    <button class="action-btn delete-btn" type="button" data-action="delete" aria-label="Delete project">
+                      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6l1 2h4v2H4V5h4l1-2zm-2 7h2v8H7v-8zm8 0h2v8h-2v-8zM10 5h4v1h-4V5z"/></svg>
+                    </button>
+                  </td>
+                </tr>
+                <tr data-id="crm-workflow-upgrade">
+                  <td>CRM Workflow Upgrade</td>
+                  <td><span class="badge badge-review">Review</span></td>
+                  <td>Arjun</td>
+                  <td>Pending</td>
+                  <td>2 days ago</td>
+                  <td class="table-actions">
+                    <button class="action-btn edit-btn" type="button" data-action="edit" aria-label="Edit project">
+                      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zm14.71-9.04a1.003 1.003 0 0 0 0-1.42l-2.33-2.33a1.003 1.003 0 0 0-1.42 0l-1.45 1.45 3.75 3.75 1.45-1.45z"/></svg>
+                    </button>
+                    <button class="action-btn delete-btn" type="button" data-action="delete" aria-label="Delete project">
+                      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6l1 2h4v2H4V5h4l1-2zm-2 7h2v8H7v-8zm8 0h2v8h-2v-8zM10 5h4v1h-4V5z"/></svg>
+                    </button>
+                  </td>
+                </tr>
+                <tr data-id="landing-page-refresh">
+                  <td>Landing Page Refresh</td>
+                  <td><span class="badge badge-success">Completed</span></td>
+                  <td>Meera</td>
+                  <td>Pass</td>
+                  <td>4 days ago</td>
+                  <td class="table-actions">
+                    <button class="action-btn edit-btn" type="button" data-action="edit" aria-label="Edit project">
+                      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zm14.71-9.04a1.003 1.003 0 0 0 0-1.42l-2.33-2.33a1.003 1.003 0 0 0-1.42 0l-1.45 1.45 3.75 3.75 1.45-1.45z"/></svg>
+                    </button>
+                    <button class="action-btn delete-btn" type="button" data-action="delete" aria-label="Delete project">
+                      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6l1 2h4v2H4V5h4l1-2zm-2 7h2v8H7v-8zm8 0h2v8h-2v-8zM10 5h4v1h-4V5z"/></svg>
+                    </button>
+                  </td>
+                </tr>
+                <tr data-id="internal-reporting-tool">
+                  <td>Internal Reporting Tool</td>
+                  <td><span class="badge badge-alert">At risk</span></td>
+                  <td>Vikram</td>
+                  <td>Issue</td>
+                  <td>1 day ago</td>
+                  <td class="table-actions">
+                    <button class="action-btn edit-btn" type="button" data-action="edit" aria-label="Edit project">
+                      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zm14.71-9.04a1.003 1.003 0 0 0 0-1.42l-2.33-2.33a1.003 1.003 0 0 0-1.42 0l-1.45 1.45 3.75 3.75 1.45-1.45z"/></svg>
+                    </button>
+                    <button class="action-btn delete-btn" type="button" data-action="delete" aria-label="Delete project">
+                      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6l1 2h4v2H4V5h4l1-2zm-2 7h2v8H7v-8zm8 0h2v8h-2v-8zM10 5h4v1h-4V5z"/></svg>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script>
+      const form = document.getElementById("project-form");
+      const projectTableBody = document.querySelector("tbody");
+      const submitButton = form.querySelector("button[type='submit']");
+      const exportButton = document.getElementById("export-report");
+      const pdfButton = document.getElementById("export-pdf");
+      const exportStatus = document.getElementById("export-status");
+      const themeToggle = document.getElementById("theme-toggle");
+      const themeStorageKey = "clove-theme";
+      const storageKey = "clove-projects";
+      const syncStorageKey = "clove-supabase-migrated";
+      const supabaseClient = window.supabase.createClient(
+        "https://cfmvqlxppihgnywgakis.supabase.co",
+        "sb_publishable_Kt3lrDuSOEC7eU6umtik6w__4890Bt7"
+      );
+      const defaultProjects = [
+        {
+          id: "client-portal-revamp",
+          name: "Client Portal Revamp",
+          status: "In progress",
+          owner: "Riya",
+          qa: "Pass",
+          updated: "Today"
+        },
+        {
+          id: "crm-workflow-upgrade",
+          name: "CRM Workflow Upgrade",
+          status: "Review",
+          owner: "Arjun",
+          qa: "Pending",
+          updated: "2 days ago"
+        },
+        {
+          id: "landing-page-refresh",
+          name: "Landing Page Refresh",
+          status: "Completed",
+          owner: "Meera",
+          qa: "Pass",
+          updated: "4 days ago"
+        },
+        {
+          id: "internal-reporting-tool",
+          name: "Internal Reporting Tool",
+          status: "At risk",
+          owner: "Vikram",
+          qa: "Issue",
+          updated: "1 day ago"
+        }
+      ];
+
+      let editingId = null;
+
+      function setTheme(isDark) {
+        document.body.classList.toggle("dark-mode", isDark);
+        themeToggle.setAttribute("aria-pressed", String(isDark));
+        themeToggle.setAttribute("aria-label", isDark ? "Switch to light mode" : "Switch to dark mode");
+        themeToggle.title = isDark ? "Switch to light mode" : "Switch to dark mode";
+        localStorage.setItem(themeStorageKey, isDark ? "dark" : "light");
+      }
+
+      function initializeTheme() {
+        const savedTheme = localStorage.getItem(themeStorageKey);
+        const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        setTheme(savedTheme ? savedTheme === "dark" : prefersDark);
+      }
+
+      const badgeClass = {
+        "In progress": "badge-progress",
+        "Review": "badge-review",
+        "Completed": "badge-success",
+        "At risk": "badge-alert"
+      };
+
+      async function getProjects() {
+        const { data, error } = await supabaseClient
+          .from("projects")
+          .select("id, name, status, owner, qa, updated")
+          .order("updated", { ascending: false });
+
+        if (error) {
+          exportStatus.textContent = "Unable to connect to shared project data";
+          return [];
+        }
+
+        if (data.length || localStorage.getItem(syncStorageKey)) return data;
+
+        const saved = localStorage.getItem(storageKey);
+        if (!saved) return data;
+
+        try {
+          const localProjects = JSON.parse(saved);
+          if (!Array.isArray(localProjects) || !localProjects.length) return data;
+
+          const { error: migrationError } = await supabaseClient.from("projects").insert(localProjects);
+          if (migrationError) {
+            exportStatus.textContent = "Shared table needs permission setup";
+            return data;
+          }
+
+          localStorage.setItem(syncStorageKey, "true");
+          return localProjects;
+        } catch (migrationError) {
+          exportStatus.textContent = "Unable to migrate local project data";
+          return data;
+        }
+      }
+
+      async function saveProjects(projects) {
+        const { error: deleteError } = await supabaseClient
+          .from("projects")
+          .delete()
+          .neq("id", "");
+        if (deleteError) {
+          exportStatus.textContent = "Unable to save shared project data";
+          return false;
+        }
+
+        if (projects.length) {
+          const { error: insertError } = await supabaseClient.from("projects").insert(projects);
+          if (insertError) {
+            exportStatus.textContent = "Unable to save shared project data";
+            return false;
+          }
+        }
+
+        localStorage.setItem(storageKey, JSON.stringify(projects));
+        localStorage.setItem(syncStorageKey, "true");
+        return true;
+      }
+
+      function formatDate(dateValue) {
+        if (!dateValue || dateValue === "Today") return dateValue || "Not set";
+
+        const date = new Date(`${dateValue}T00:00:00`);
+        if (Number.isNaN(date.getTime())) return dateValue;
+
+        return date.toLocaleDateString(undefined, {
+          year: "numeric",
+          month: "short",
+          day: "numeric"
+        });
+      }
+
+      function escapeCsvValue(value) {
+        return `"${String(value).replace(/"/g, '""')}"`;
+      }
+
+      function escapeHtml(value) {
+        return String(value)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      }
+
+      function getReportDate() {
+        const date = new Date();
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
+        return `${year}-${month}-${day}`;
+      }
+
+      function calculateEfficiency(projects) {
+        const total = projects.length;
+        const completed = projects.filter((project) => project.status === "Completed").length;
+        const inProgress = projects.filter((project) => project.status === "In progress").length;
+        const passedQa = projects.filter((project) => project.qa === "Pass").length;
+        const completionRate = total ? (completed / total) * 100 : 0;
+        const qaPassRate = total ? (passedQa / total) * 100 : 0;
+        const qualityAdjustedRate = (completionRate * qaPassRate) / 100;
+        const teamOutputRatio = completed + inProgress
+          ? (completed / (completed + inProgress)) * 100
+          : 0;
+
+        return {
+          completionRate,
+          qualityAdjustedRate,
+          teamOutputRatio
+        };
+      }
+
+      function updateEfficiencyMetrics(projects) {
+        const efficiency = calculateEfficiency(projects);
+        document.getElementById("completion-efficiency").textContent = `${efficiency.completionRate.toFixed(1)}%`;
+        document.getElementById("quality-efficiency").textContent = `${efficiency.qualityAdjustedRate.toFixed(1)}%`;
+        document.getElementById("team-output").textContent = `${efficiency.teamOutputRatio.toFixed(1)}%`;
+      }
+
+      async function exportReport() {
+        const projects = await getProjects();
+        const headers = ["Project", "Status", "Owner", "QA/QC", "Updated"];
+        const rows = projects.map((project) => [
+          project.name,
+          project.status,
+          project.owner,
+          project.qa,
+          formatDate(project.updated)
+        ]);
+        const csv = [headers, ...rows]
+          .map((row) => row.map(escapeCsvValue).join(","))
+          .join("\n");
+        const filename = `clove-101-weekly-report-${getReportDate()}.csv`;
+        const downloadUrl = URL.createObjectURL(new Blob(["\uFEFF", csv], { type: "text/csv;charset=utf-8" }));
+        const downloadLink = document.createElement("a");
+
+        downloadLink.href = downloadUrl;
+        downloadLink.download = filename;
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        downloadLink.remove();
+        URL.revokeObjectURL(downloadUrl);
+
+        exportStatus.textContent = `${filename} saved to Downloads`;
+      }
+
+      function buildPdfChart(title, items, maxValue) {
+        const chartWidth = 640;
+        const chartHeight = 230;
+        const barHeight = 32;
+        const barGap = 22;
+        const leftOffset = 190;
+        const usableWidth = chartWidth - leftOffset - 28;
+        const bars = items.map((item, index) => {
+          const y = 26 + index * (barHeight + barGap);
+          const width = Math.max(4, (item.value / maxValue) * usableWidth);
+          return `
+            <text x="0" y="${y + 22}">${escapeHtml(item.label)}</text>
+            <rect x="${leftOffset}" y="${y}" width="${usableWidth}" height="${barHeight}" rx="6" fill="#f3e6da" />
+            <rect x="${leftOffset}" y="${y}" width="${width}" height="${barHeight}" rx="6" fill="#d7772c" />
+            <text x="${leftOffset + width + 12}" y="${y + 22}" class="value">${item.value}${item.suffix || ""}</text>
+          `;
+        }).join("");
+
+        return `
+          <section class="chart-card">
+            <h2>${escapeHtml(title)}</h2>
+            <svg viewBox="0 0 ${chartWidth} ${chartHeight}" role="img" aria-label="${escapeHtml(title)} comparison chart">
+              ${bars}
+            </svg>
+          </section>
+        `;
+      }
+
+      async function exportPdf() {
+        if (!window.jspdf) {
+          exportStatus.textContent = "PDF download is unavailable while offline";
+          return;
+        }
+
+        const projects = await getProjects();
+        const efficiency = calculateEfficiency(projects);
+        const filename = `clove-101-weekly-report-${getReportDate()}.pdf`;
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
+        const pageWidth = 297;
+        const orange = [215, 119, 44];
+        const darkText = [29, 38, 36];
+        const mutedText = [94, 109, 103];
+        const line = [234, 220, 201];
+        const charts = [
+          {
+            title: "Delivery pipeline",
+            max: 12,
+            items: [["In progress", 6], ["Awaiting approval", 4], ["Completed", 12]]
+          },
+          {
+            title: "Response health",
+            max: 100,
+            items: [["Positive", 81, "%"], ["Needs attention", 12, "%"], ["Pending", 7, "%"]]
+          },
+          {
+            title: "Quality index",
+            max: 100,
+            items: [["Pass rate", 94, "%"], ["Open issues", 11], ["Escalations", 2]]
+          }
+        ];
+
+        doc.setTextColor(...darkText);
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(22);
+        doc.text("Clove 101 Weekly Delivery Report", 14, 18);
+        doc.setDrawColor(...orange);
+        doc.setLineWidth(1.2);
+        doc.line(14, 23, pageWidth - 14, 23);
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(10);
+        doc.setTextColor(...mutedText);
+        doc.text(`Generated ${getReportDate()}`, 14, 30);
+
+        charts.forEach((chart, chartIndex) => {
+          const x = 14 + chartIndex * 91;
+          const y = 38;
+          const width = 84;
+          const height = 62;
+          const barX = x + 31;
+          const barWidth = 43;
+          doc.setDrawColor(...line);
+          doc.setLineWidth(0.35);
+          doc.roundedRect(x, y, width, height, 2, 2);
+          doc.setFont("helvetica", "bold");
+          doc.setFontSize(12);
+          doc.setTextColor(...darkText);
+          doc.text(chart.title, x + 5, y + 9);
+
+          chart.items.forEach((item, itemIndex) => {
+            const barY = y + 17 + itemIndex * 13;
+            const itemWidth = Math.max(1.5, (item[1] / chart.max) * barWidth);
+            doc.setFont("helvetica", "normal");
+            doc.setFontSize(8.5);
+            doc.setTextColor(...mutedText);
+            doc.text(item[0], x + 5, barY + 4.5);
+            doc.setFillColor(243, 230, 218);
+            doc.roundedRect(barX, barY, barWidth, 7, 1.5, 1.5, "F");
+            doc.setFillColor(...orange);
+            doc.roundedRect(barX, barY, itemWidth, 7, 1.5, 1.5, "F");
+            doc.setFont("helvetica", "bold");
+            doc.setTextColor(...darkText);
+            doc.text(`${item[1]}${item[2] || ""}`, barX + barWidth + 3, barY + 4.5);
+          });
+        });
+
+        const efficiencyBoxes = [
+          ["Completion efficiency", efficiency.completionRate],
+          ["Quality-adjusted efficiency", efficiency.qualityAdjustedRate],
+          ["Team output ratio", efficiency.teamOutputRatio]
+        ];
+        efficiencyBoxes.forEach((box, boxIndex) => {
+          const x = 14 + boxIndex * 91;
+          doc.setFillColor(255, 247, 240);
+          doc.setDrawColor(...line);
+          doc.roundedRect(x, 105, 84, 14, 2, 2, "FD");
+          doc.setFont("helvetica", "normal");
+          doc.setFontSize(8.5);
+          doc.setTextColor(...mutedText);
+          doc.text(box[0], x + 4, 111);
+          doc.setFont("helvetica", "bold");
+          doc.setFontSize(13);
+          doc.setTextColor(...darkText);
+          doc.text(`${box[1].toFixed(1)}%`, x + 4, 116.5);
+        });
+
+        const tableTop = 126;
+        const columns = [14, 105, 145, 190, 230];
+        const headers = ["Project", "Status", "Owner", "QA/QC", "Updated"];
+        const rowHeight = 10;
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(11);
+        doc.setFillColor(247, 229, 210);
+        doc.rect(14, tableTop, pageWidth - 28, rowHeight, "F");
+        doc.setTextColor(...darkText);
+        headers.forEach((header, index) => doc.text(header, columns[index] + 3, tableTop + 6.5));
+
+        projects.forEach((project, index) => {
+          const y = tableTop + rowHeight + index * rowHeight;
+          const values = [project.name, project.status, project.owner, project.qa, formatDate(project.updated)];
+          doc.setDrawColor(...line);
+          doc.rect(14, y, pageWidth - 28, rowHeight);
+          doc.setFont("helvetica", "normal");
+          doc.setFontSize(10);
+          doc.setTextColor(...darkText);
+          values.forEach((value, valueIndex) => doc.text(String(value), columns[valueIndex] + 3, y + 6.5));
+        });
+
+        doc.setFontSize(9);
+        doc.setTextColor(...mutedText);
+        doc.text("Prepared for weekly management review", 14, 198);
+        doc.save(filename);
+        exportStatus.textContent = `${filename} downloaded in landscape format`;
+      }
+
+      function renderProjectRow(project) {
+        const row = document.createElement("tr");
+        row.dataset.id = project.id;
+        row.innerHTML = `
+          <td>${project.name}</td>
+          <td><span class="badge ${badgeClass[project.status] || "badge-progress"}">${project.status}</span></td>
+          <td>${project.owner}</td>
+          <td>${project.qa}</td>
+          <td>${formatDate(project.updated)}</td>
+          <td class="table-actions">
+            <button class="action-btn edit-btn" type="button" data-action="edit" aria-label="Edit project">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zm14.71-9.04a1.003 1.003 0 0 0 0-1.42l-2.33-2.33a1.003 1.003 0 0 0-1.42 0l-1.45 1.45 3.75 3.75 1.45-1.45z"/></svg>
+            </button>
+            <button class="action-btn delete-btn" type="button" data-action="delete" aria-label="Delete project">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6l1 2h4v2H4V5h4l1-2zm-2 7h2v8H7v-8zm8 0h2v8h-2v-8zM10 5h4v1h-4V5z"/></svg>
+            </button>
+          </td>
+        `;
+        return row;
+      }
+
+      async function renderProjects() {
+        const projects = await getProjects();
+        projectTableBody.innerHTML = "";
+
+        if (!projects.length) {
+          projectTableBody.innerHTML = '<tr><td class="empty-state" colspan="6">No recent delivery overview yet</td></tr>';
+          updateEfficiencyMetrics(projects);
+          return;
+        }
+
+        projects.forEach((project) => {
+          projectTableBody.appendChild(renderProjectRow(project));
+        });
+        updateEfficiencyMetrics(projects);
+      }
+
+      exportButton.addEventListener("click", exportReport);
+      pdfButton.addEventListener("click", exportPdf);
+      themeToggle.addEventListener("click", function () {
+        setTheme(!document.body.classList.contains("dark-mode"));
+      });
+
+      function resetForm() {
+        form.reset();
+        editingId = null;
+        submitButton.textContent = "Add project";
+      }
+
+      form.addEventListener("submit", async function (event) {
+        event.preventDefault();
+
+        const projectName = document.getElementById("project-name").value.trim();
+        const projectStatus = document.getElementById("project-status").value;
+        const owner = document.getElementById("project-owner").value.trim();
+        const qaStatus = document.getElementById("project-qa").value;
+        const updated = document.getElementById("project-updated").value || "Today";
+
+        if (!projectName || !owner) return;
+
+        const projects = await getProjects();
+
+        if (editingId) {
+          const index = projects.findIndex((project) => project.id === editingId);
+          if (index >= 0) {
+            projects[index] = {
+              ...projects[index],
+              name: projectName,
+              status: projectStatus,
+              owner,
+              qa: qaStatus,
+              updated
+            };
+          }
+        } else {
+          const newProject = {
+            id: `${projectName.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-${Date.now()}`,
+            name: projectName,
+            status: projectStatus,
+            owner,
+            qa: qaStatus,
+            updated
+          };
+          projects.push(newProject);
+        }
+
+        if (!await saveProjects(projects)) return;
+        await renderProjects();
+        resetForm();
+      });
+
+      projectTableBody.addEventListener("click", async function (event) {
+        const button = event.target.closest("button");
+        if (!button) return;
+
+        const row = button.closest("tr");
+        const projectId = row?.dataset.id;
+        if (!projectId) return;
+
+        const projects = await getProjects();
+        const project = projects.find((item) => item.id === projectId);
+        if (!project) return;
+
+        if (button.dataset.action === "delete") {
+          const filteredProjects = projects.filter((item) => item.id !== projectId);
+          if (!await saveProjects(filteredProjects)) return;
+          await renderProjects();
+          return;
+        }
+
+        if (button.dataset.action === "edit") {
+          editingId = projectId;
+          document.getElementById("project-name").value = project.name;
+          document.getElementById("project-status").value = project.status;
+          document.getElementById("project-owner").value = project.owner;
+          document.getElementById("project-qa").value = project.qa;
+          document.getElementById("project-updated").value =
+            /^\d{4}-\d{2}-\d{2}$/.test(project.updated) ? project.updated : "";
+          submitButton.textContent = "Update project";
+          document.getElementById("project-name").focus();
+        }
+      });
+
+      initializeTheme();
+      renderProjects();
+    </script>
+  </body>
+</html>
