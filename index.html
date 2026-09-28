@@ -78,12 +78,12 @@
             </div>
 
             <div class="mini-chart" aria-hidden="true">
-              <span style="height: 38%"></span>
-              <span style="height: 48%"></span>
-              <span style="height: 52%"></span>
-              <span style="height: 68%"></span>
-              <span style="height: 76%"></span>
-              <span style="height: 92%"></span>
+              <span id="mini-bar-one" style="height: 38%"></span>
+              <span id="mini-bar-two" style="height: 48%"></span>
+              <span id="mini-bar-three" style="height: 52%"></span>
+              <span id="mini-bar-four" style="height: 68%"></span>
+              <span id="mini-bar-five" style="height: 76%"></span>
+              <span id="mini-bar-six" style="height: 92%"></span>
             </div>
           </div>
         </section>
@@ -93,9 +93,9 @@
             <p class="metric-label">Project status</p>
             <h2>Delivery pipeline</h2>
             <ul>
-              <li><span>In progress</span><strong>6</strong></li>
-              <li><span>Awaiting approval</span><strong>4</strong></li>
-              <li><span>Completed</span><strong>12</strong></li>
+              <li><span>In progress</span><strong id="in-progress-count">0</strong></li>
+              <li><span>Awaiting approval</span><strong id="review-count">0</strong></li>
+              <li><span>Completed</span><strong id="completed-count">0</strong></li>
             </ul>
           </article>
 
@@ -103,9 +103,9 @@
             <p class="metric-label">Client feedback</p>
             <h2>Response health</h2>
             <ul>
-              <li><span>Positive</span><strong>81%</strong></li>
-              <li><span>Needs attention</span><strong>12%</strong></li>
-              <li><span>Pending</span><strong>7%</strong></li>
+              <li><span>Positive</span><strong id="positive-response">0%</strong></li>
+              <li><span>Needs attention</span><strong id="attention-response">0%</strong></li>
+              <li><span>Pending</span><strong id="pending-response">0%</strong></li>
             </ul>
           </article>
 
@@ -113,9 +113,9 @@
             <p class="metric-label">QA / QC review</p>
             <h2>Quality index</h2>
             <ul>
-              <li><span>Pass rate</span><strong>94%</strong></li>
-              <li><span>Open issues</span><strong>11</strong></li>
-              <li><span>Escalations</span><strong>2</strong></li>
+              <li><span>Pass rate</span><strong id="pass-rate">0%</strong></li>
+              <li><span>Open issues</span><strong id="open-issues">0</strong></li>
+              <li><span>Escalations</span><strong id="escalations">0</strong></li>
             </ul>
           </article>
         </section>
@@ -422,6 +422,58 @@
         return `${year}-${month}-${day}`;
       }
 
+      function calculateReportMetrics(projects) {
+        const total = projects.length;
+        const inProgress = projects.filter((project) => project.status === "In progress").length;
+        const awaitingApproval = projects.filter((project) => project.status === "Review").length;
+        const completed = projects.filter((project) => project.status === "Completed").length;
+        const atRisk = projects.filter((project) => project.status === "At risk").length;
+        const passedQa = projects.filter((project) => project.qa === "Pass").length;
+        const openIssues = projects.filter((project) => project.qa === "Issue").length;
+        const positiveResponse = total ? (completed / total) * 100 : 0;
+        const attentionResponse = total ? ((awaitingApproval + atRisk) / total) * 100 : 0;
+        const pendingResponse = total ? (inProgress / total) * 100 : 0;
+
+        return {
+          inProgress,
+          awaitingApproval,
+          completed,
+          atRisk,
+          positiveResponse,
+          attentionResponse,
+          pendingResponse,
+          passRate: total ? (passedQa / total) * 100 : 0,
+          openIssues,
+          escalations: atRisk
+        };
+      }
+
+      function updateDashboardMetrics(projects) {
+        const metrics = calculateReportMetrics(projects);
+        document.getElementById("in-progress-count").textContent = metrics.inProgress;
+        document.getElementById("review-count").textContent = metrics.awaitingApproval;
+        document.getElementById("completed-count").textContent = metrics.completed;
+        document.getElementById("positive-response").textContent = `${metrics.positiveResponse.toFixed(0)}%`;
+        document.getElementById("attention-response").textContent = `${metrics.attentionResponse.toFixed(0)}%`;
+        document.getElementById("pending-response").textContent = `${metrics.pendingResponse.toFixed(0)}%`;
+        document.getElementById("pass-rate").textContent = `${metrics.passRate.toFixed(0)}%`;
+        document.getElementById("open-issues").textContent = metrics.openIssues;
+        document.getElementById("escalations").textContent = metrics.escalations;
+
+        const bars = [
+          metrics.inProgress,
+          metrics.awaitingApproval,
+          metrics.completed,
+          metrics.openIssues,
+          metrics.escalations,
+          metrics.passRate
+        ];
+        const maxBar = Math.max(...bars, 1);
+        bars.forEach((value, index) => {
+          document.getElementById(`mini-bar-${["one", "two", "three", "four", "five", "six"][index]}`).style.height = `${Math.max(8, (value / maxBar) * 100)}%`;
+        });
+      }
+
       function calculateEfficiency(projects) {
         const total = projects.length;
         const completed = projects.filter((project) => project.status === "Completed").length;
@@ -510,6 +562,7 @@
         }
 
         const projects = await getProjects();
+        const reportMetrics = calculateReportMetrics(projects);
         const efficiency = calculateEfficiency(projects);
         const filename = `clove-101-weekly-report-${getReportDate()}.pdf`;
         const { jsPDF } = window.jspdf;
@@ -522,18 +575,30 @@
         const charts = [
           {
             title: "Delivery pipeline",
-            max: 12,
-            items: [["In progress", 6], ["Awaiting approval", 4], ["Completed", 12]]
+            max: Math.max(reportMetrics.inProgress, reportMetrics.awaitingApproval, reportMetrics.completed, 1),
+            items: [
+              ["In progress", reportMetrics.inProgress],
+              ["Awaiting approval", reportMetrics.awaitingApproval],
+              ["Completed", reportMetrics.completed]
+            ]
           },
           {
             title: "Response health",
             max: 100,
-            items: [["Positive", 81, "%"], ["Needs attention", 12, "%"], ["Pending", 7, "%"]]
+            items: [
+              ["Positive", reportMetrics.positiveResponse, "%"],
+              ["Needs attention", reportMetrics.attentionResponse, "%"],
+              ["Pending", reportMetrics.pendingResponse, "%"]
+            ]
           },
           {
             title: "Quality index",
             max: 100,
-            items: [["Pass rate", 94, "%"], ["Open issues", 11], ["Escalations", 2]]
+            items: [
+              ["Pass rate", reportMetrics.passRate, "%"],
+              ["Open issues", reportMetrics.openIssues],
+              ["Escalations", reportMetrics.escalations]
+            ]
           }
         ];
 
@@ -654,6 +719,7 @@
       async function renderProjects() {
         const projects = await getProjects();
         projectTableBody.innerHTML = "";
+        updateDashboardMetrics(projects);
 
         if (!projects.length) {
           projectTableBody.innerHTML = '<tr><td class="empty-state" colspan="6">No recent delivery overview yet</td></tr>';
