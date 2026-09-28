@@ -338,7 +338,7 @@
           .order("updated", { ascending: false });
 
         if (error) {
-          exportStatus.textContent = "Unable to connect to shared project data";
+          exportStatus.textContent = `Supabase error: ${error.message}`;
           return [];
         }
 
@@ -353,7 +353,7 @@
 
           const { error: migrationError } = await supabaseClient.from("projects").insert(localProjects);
           if (migrationError) {
-            exportStatus.textContent = "Shared table needs permission setup";
+            exportStatus.textContent = `Supabase error: ${migrationError.message}`;
             return data;
           }
 
@@ -371,14 +371,14 @@
           .delete()
           .neq("id", "");
         if (deleteError) {
-          exportStatus.textContent = "Unable to save shared project data";
+          exportStatus.textContent = `Supabase error: ${deleteError.message}`;
           return false;
         }
 
         if (projects.length) {
           const { error: insertError } = await supabaseClient.from("projects").insert(projects);
           if (insertError) {
-            exportStatus.textContent = "Unable to save shared project data";
+            exportStatus.textContent = `Supabase error: ${insertError.message}`;
             return false;
           }
         }
